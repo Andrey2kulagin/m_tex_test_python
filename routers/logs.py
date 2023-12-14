@@ -16,7 +16,7 @@ async def create(log: str = "", db: Session = Depends(get_db)):
 
 @router.get("/", tags=["user"])
 async def get(count: int = None, db: Session = Depends(get_db)):
-    log_data = LogsService.get_logs(count, db)
+    log_data = LogsService.get_logs(db, count)
     
     return log_data
 
