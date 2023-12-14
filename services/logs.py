@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import INET
 def create_log(log: str, db: Session):
     
     try:
+        
         data = logs.LogDetail.parse_from_string(log)
         print(data)
         log = Log(ip=str(data.ip), method=data.method, uri=str(data.uri), status_code=data.status_code)

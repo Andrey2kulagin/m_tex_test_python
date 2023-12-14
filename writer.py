@@ -4,6 +4,9 @@ import time
 import multiprocessing
 import random
 import string
+import aiohttp
+import asyncio
+import json
 def gen_log_str()->str:
     """_summary_
         generate log_str in format '{ip} {http_method} {uri} {http_status}'
@@ -60,19 +63,31 @@ def generate_random_ip()->str:
         str: _description_
         random api
     """
-    octet_count = random.randint(1,8)
+    octet_count = random.randint(4,5)
     octets = []
     for _ in range(octet_count):
-        octets.append(str(random.randint(0, 1000)))
+        octets.append(str(random.randint(0, 300)))
     return ".".join(octets)
 
-
+async def send_log_str_to_api(log_str):
+    api_url = "http://127.0.0.1:9000/user/"
+    headers = {'Content-Type': 'application/json'}
+    data = json.dumps({'log': log_str})
+    async with aiohttp.ClientSession() as session:
+        async with session.post(api_url, data=data, headers=headers) as response:
+            if response.status == 200:
+                print(f"Log string successfully sent to API: {log_str}")
+            else:
+                print(f"Failed to send log string to API. HTTP status code: {response.status}")
+        
 def write_to_file(process_id, file_path, data, time_sleep):
     count = 0
     while True:
         with open(file_path, 'a') as file:
-            file.write(f"Process {process_id}: {data} {gen_log_str()}\n")
+            log_str = gen_log_str()
+            file.write(f"Process {process_id}: {data} {log_str}\n")
             count+=1
+            asyncio.run(send_log_str_to_api(log_str))
             time.sleep(time_sleep/1000.0)
 
 if __name__ == '__main__':

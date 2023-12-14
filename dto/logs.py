@@ -35,3 +35,6 @@ class Log(BaseModel):
     id: UUID4
     created: datetime
     log: LogDetail
+
+class LogCreate(BaseModel):
+    log: str
