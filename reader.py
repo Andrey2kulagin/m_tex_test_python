@@ -1,7 +1,8 @@
 import aiohttp
 import time
+import fcntl
 async def get_logs_from_api(count: int = 50):
-    url = "http://127.0.0.1:9000/user/"  # Замените на фактический URL вашего API
+    url = "http://fastapi-app:8080/logs/"  # Замените на фактический URL вашего API
 
     params = {"count": count}
 
@@ -25,12 +26,20 @@ async def main():
     logs_data = await get_logs_from_api()
     if logs_data:
         result = await logs_handler(logs_data)
+        with open("handler_results.txt", "a") as file:
+            fcntl.flock(file, fcntl.LOCK_EX)
+            file.write(f"The percentage of successful responses among the last 50 that were recorded on the server is {result} %\n")
+            fcntl.flock(file, fcntl.LOCK_UN)
+
         print(result)
     else:
         print("Failed to fetch logs data")
 
 # Запуск основной функции
 if __name__ == "__main__":
+    """_summary_
+    calculate persent success http response
+    """
     import asyncio
     while True:
         asyncio.run(main())

@@ -27,7 +27,6 @@ class LogDetail(BaseModel):
             ip, method, uri, status= log_string.split()
             return cls(ip=IPv4Address(ip), method=HttpMethodEnum(method.upper()), status_code=int(status), uri=uri)
         except ValueError as e:
-            print(e)
             raise ValidationError(f"Invalid log: {e}")
 
 

@@ -17,14 +17,12 @@ def create_log(log: str, db: Session):
         db.refresh(log)
         return 201
     except Exception as e:
-        print(e)
+        
         return 418
 
 
 def get_logs(db, count: int = 50):
     log_data_list = db.query(Log).order_by(desc(Log.created)).limit(count).all()
-    for data in log_data_list:
-        print(data.method, type(data.method))
     log_models = [
     logs.Log(
         id=log_data.id,

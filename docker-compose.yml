@@ -11,6 +11,7 @@ services:
       - .:/app
     depends_on:
       - postgres
+    
 
   postgres:
     image: postgres:latest
@@ -20,3 +21,17 @@ services:
       POSTGRES_DB: logs_db
     ports:
       - "5435:5432"
+
+  reader:
+    build: .
+    command: ["python3", "reader.py"]
+    restart: always
+    volumes:
+      - .:/app
+
+  writer:
+    build: .
+    command: ["python3", "writer.py"]
+    restart: always
+    volumes:
+      - .:/app
